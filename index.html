@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0e1430">
+    <title>Extinction Dash</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #0e1430; }
+      #unity-canvas {
+        position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh;
+        display: block; background: #4aa8e0; outline: none; touch-action: none;
+        -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+      }
+      #loader {
+        position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 18px; color: #ffd23a; font: bold 22px/1 monospace; letter-spacing: 4px; background: #4aa8e0;
+        text-shadow: 3px 3px 0 #1d261f;
+      }
+      #bar { width: 220px; height: 14px; border: 4px solid #1d261f; background: #bfe8f0; }
+      #fill { width: 0; height: 100%; background: #ffd23a; }
+      #loader.error { color: #fff; font-size: 14px; letter-spacing: 0; padding: 24px; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="loader"><div>EXTINCTION DASH</div><div id="bar"><div id="fill"></div></div></div>
+    <script src="Build/WebGL.loader.js"></script>
+    <script>
+      const canvas = document.querySelector("#unity-canvas");
+      const loader = document.querySelector("#loader");
+      const fill = document.querySelector("#fill");
+      createUnityInstance(canvas, {
+        arguments: [],
+        dataUrl: "Build/WebGL.data.unityweb",
+        frameworkUrl: "Build/WebGL.framework.js.unityweb",
+        codeUrl: "Build/WebGL.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Charlie Hall",
+        productName: "Extinction Dash",
+        productVersion: "1.0",
+      }, (progress) => {
+        fill.style.width = Math.round(progress * 100) + "%";
+      }).then(() => {
+        loader.remove();
+        canvas.focus();
+      }).catch((message) => {
+        loader.className = "error";
+        loader.textContent = message;
+      });
+      // Keep keyboard focus on the game so Space jumps instead of scrolling.
+      canvas.addEventListener("pointerdown", () => canvas.focus());
+    </script>
+  </body>
+</html>
