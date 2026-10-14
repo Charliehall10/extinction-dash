@@ -2,7 +2,7 @@
 
 A one-button dino runner made in Unity 6 (6000.6.5f1). Run through five levels, each faster and meaner than the last, and outrun the meteor that wiped out the dinosaurs.
 
-**Play it in your browser:** https://charliehall10.github.io/extinction-dash/ (keyboard, mouse or touch)
+**Play it in your browser:** https://charliehall10.github.io/extinction-dash/play/ (keyboard, mouse or touch) · **Case study:** https://charliehall10.github.io/extinction-dash/
 
 ## Levels
 
@@ -60,6 +60,10 @@ The same builds are under the **Extinction Dash** menu in the editor. To try the
 cd Builds/WebGL && python3 -m http.server 8000
 ```
 
+## Publishing
+
+`bash site/publish.sh` publishes to GitHub Pages: the case study (`site/index.html` and `site/media`) at the root and the WebGL build at `/play/`. Build the WebGL version first. `--preview` assembles the site into `site/dist` without publishing.
+
 ## Testing
 
 An autoplay mode plays the game by itself for testing: add `?autoplay` to the WebGL URL, or pass `-autoplay` to the Linux build. For headless screenshots:
@@ -70,8 +74,8 @@ Builds/Linux/ExtinctionDash.x86_64 -batchmode -shots /tmp/shots -screen 1600x900
 
 This saves PNGs at a fixed interval plus one at each level-up and death, logs every level-up and death (with its cause), and quits at `-shotmax`. `-level` starts straight into a level and `-botquit` makes autoplay stop jumping after that many seconds. Test runs never read or write saved progress.
 
-## Credits
+## Assets
 
-Design, code, pixel art and sound by Charlie Hall. Everything is original and drawn or synthesised in code; there are no third-party assets. Built with Unity Personal.
+There are no third-party assets: every sprite, the font and every sound effect is drawn or synthesised in code. Built with Unity Personal.
 
 © 2026 Charlie Hall. All rights reserved.

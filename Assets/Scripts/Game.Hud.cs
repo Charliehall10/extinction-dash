@@ -334,7 +334,7 @@ public partial class Game
         }
         if (clock >= nextShot)
         {
-            Capture($"t{nextShot:000}");
+            Capture($"t{nextShot:000.###}");
             nextShot += shotEvery;
         }
         if (clock >= shotMax) Application.Quit();

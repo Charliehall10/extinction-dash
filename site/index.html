@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Extinction Dash</title>
+<meta name="description" content="Extinction Dash: a one-button pixel-art dino runner across five levels, made in Unity 6. Play it in your browser, plus a design and engineering case study.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27 shape-rendering=%27crispEdges%27%3E%3Crect width=%2716%27 height=%2716%27 rx=%273%27 fill=%27%233a0a10%27/%3E%3Cpath d=%27M7 3h6v4h-2v1h-2v1h1v1H9v3H8v-2H6v2H5v-3H4V9H3V8h2V7h2z%27 fill=%27%236cc24a%27/%3E%3Crect x=%279%27 y=%274%27 width=%271%27 height=%271%27 fill=%27%23fff%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&family=Silkscreen:wght@400;700&display=swap">
+<style>
+:root {
+  --bg: #F6F0E6; --surface: #FCF8F1; --ink: #1E1A22; --muted: #574F58; --line: #E6DBCB;
+  --accent: #B5480E; --gold: #FFD23A; --amber: #F09A1C; --hero: #1F0B12; --hero-ink: #FBEFE4; --hero-muted: #E2C3B6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #140B10; --surface: #1F1218; --ink: #F4EAE2; --muted: #C9B5AD; --line: #3A2229; --accent: #FFA45C;
+  }
+}
+:root[data-theme="dark"] { --bg: #140B10; --surface: #1F1218; --ink: #F4EAE2; --muted: #C9B5AD; --line: #3A2229; --accent: #FFA45C; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 18px/1.6 'DM Sans', Arial, sans-serif; }
+img { max-width: 100%; height: auto; display: block; }
+img.px { image-rendering: pixelated; }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: 'Silkscreen', 'Courier New', monospace; line-height: 1.1; margin: 0 0 .5em; font-weight: 700; }
+h2 { font-size: clamp(26px, 4vw, 38px); }
+h3 { font-size: 20px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+section { padding: 64px 0; }
+.hero { background: linear-gradient(#3A0A10, var(--hero) 70%); color: var(--hero-ink); padding: 72px 0 0; overflow: hidden; }
+.hero .eyebrow { color: var(--gold); font-weight: 700; letter-spacing: .2em; font-size: 14px; text-transform: uppercase; }
+.hero h1 { font-size: clamp(40px, 8vw, 84px); margin: 12px 0 16px; color: var(--gold); text-shadow: 4px 4px 0 #000; }
+.hero p.lead { color: var(--hero-muted); font-size: clamp(18px, 2.4vw, 23px); max-width: 660px; margin: 0 0 28px; }
+.btns { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
+.btn { display: inline-block; padding: 14px 22px; border-radius: 999px; font-weight: 700; text-decoration: none; }
+.btn.primary { background: var(--gold); color: #1E1A22; }
+.btn.ghost { border: 2px solid var(--hero-muted); color: var(--hero-ink); }
+.hero img { border-radius: 14px 14px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,.45); }
+.grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.grid.three { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.card img { border-radius: 10px; margin-bottom: 14px; }
+.card h3 small { display: block; font-family: 'DM Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; color: var(--muted); margin-top: 4px; }
+.stat b { display: block; font-family: 'Silkscreen', 'Courier New', monospace; font-size: 32px; color: var(--accent); line-height: 1.2; }
+.stat span { color: var(--muted); font-size: 15px; }
+.note { color: var(--muted); font-size: 15px; }
+.clip { width: 100%; border-radius: 14px; background: #000; }
+.two { display: grid; gap: 32px; grid-template-columns: 1fr; }
+@media (min-width: 860px) { .two { grid-template-columns: 1fr 1fr; align-items: center; } .two.narrow { grid-template-columns: 2fr 1fr; } }
+.phone { max-width: 300px; margin: 0 auto; border-radius: 22px; border: 8px solid #2a1a20; }
+ul.points { padding-left: 1.1em; margin: 0; }
+ul.points li { margin-bottom: .6em; }
+footer { background: var(--hero); color: var(--hero-muted); padding: 32px 0; font-size: 15px; }
+footer a { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Original Unity game · play in your browser</div>
+    <h1>Extinction Dash</h1>
+    <p class="lead">A one-button dino runner across five levels, racing the meteor that ended the dinosaurs.</p>
+    <div class="btns">
+      <a class="btn primary" href="play/">Play the game</a>
+      <a class="btn ghost" href="#video">Watch it play</a>
+    </div>
+    <img class="px" src="media/hero.png" alt="Level 5, Extinction: the dino runs under a red sky as a flaming boulder falls and the giant meteor looms over the volcano" width="1280" height="720">
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap two">
+    <div>
+      <h2>The idea</h2>
+      <p>One button, five levels, one meteor. Tap to hop, hold to jump higher. Each level is faster than the last and brings new hazards, and the final level plays out under the meteor itself, growing in the sky as you near the finish.</p>
+      <p>The twist is <b>Amber Rush</b>. Amber with a mosquito inside is scattered along the run, often in risky spots. Collecting it in a chain raises a multiplier that boosts <b>both your points and your speed</b>, so greed makes the game harder. Fill the amber bar and the dino goes into a <b>Stampede</b>.</p>
+      <p>Levels run straight into each other past a finish flag, with no loading screens. Dying restarts the current level with the score you had when you reached it.</p>
+    </div>
+    <img class="px" src="media/title.png" alt="The title screen: Extinction Dash over a sunny fern valley with palms and a volcano" width="1280" height="720" style="border-radius:14px">
+  </div>
+</section>
+
+<section id="video" style="padding-top:0">
+  <div class="wrap">
+    <h2>See it play</h2>
+    <img class="clip px" src="media/gameplay.webp" alt="Twenty seconds of gameplay, four from each level: fern valley hills, tar pits, a sunset chasm, the volcano at night and the extinction level with falling boulders" width="640" height="360" loading="lazy">
+    <p class="note">Twenty seconds from the real game, four from each level, played by its built-in autoplay test mode. Silent here; the game has retro sound effects.</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>The numbers</h2>
+    <div class="grid three">
+      <div class="card stat"><b>5 levels</b><span>Each faster than the last, with new hazards</span></div>
+      <div class="card stat"><b>8 → 21</b><span>Base speed in units per second, first level to last</span></div>
+      <div class="card stat"><b>X5</b><span>Top multiplier: five times the points and 20% more speed</span></div>
+      <div class="card stat"><b>0.65 s</b><span>A full jump: tap for a short hop, hold for 3.2 units of height</span></div>
+      <div class="card stat"><b>4 min</b><span>Roughly how long a clean run through all five levels takes</span></div>
+      <div class="card stat"><b>0 asset files</b><span>Every sprite, the font and every sound is generated in code</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>Five levels</h2>
+    <div class="grid three">
+      <div class="card"><img class="px" src="media/level1.png" alt="Level 1, Fern Valley: the dino runs up a grassy hill" width="1280" height="720" loading="lazy"><h3>1. Fern Valley<small>Speed 8 → 10.5</small></h3><p class="note">Rocks, ferns and logs over rolling hills and low ledges. Teaches the jump.</p></div>
+      <div class="card"><img class="px" src="media/level2.png" alt="Level 2, Tar Pits: a row of amber ahead of a black tar pit" width="1280" height="720" loading="lazy"><h3>2. Tar Pits<small>Speed 10.5 → 13</small></h3><p class="note">Tar pits to clear, pterodactyls flying low (jump) or high (stay down), and the first back-to-back hazards.</p></div>
+      <div class="card"><img class="px" src="media/level3.png" alt="Level 3, Raptor Ridge at sunset: an arc of amber over a dark chasm" width="1280" height="720" loading="lazy"><h3>3. Raptor Ridge<small>Speed 13 → 15.5</small></h3><p class="note">Sunset. Two-unit cliffs that only a full jump clears, stairs, and wider chasms.</p></div>
+      <div class="card"><img class="px" src="media/level4.png" alt="Level 4, Volcano at night: the dino runs along a raised ledge towards a lava pit" width="1280" height="720" loading="lazy"><h3>4. Volcano<small>Speed 15.5 → 18</small></h3><p class="note">Night under falling ash. Lava pits, and flaming boulders that drop wherever a red marker blinks.</p></div>
+      <div class="card"><img class="px" src="media/level5.png" alt="Level 5, Extinction: the dino leaps a lava pit under a red sky and the meteor" width="1280" height="720" loading="lazy"><h3>5. Extinction<small>Speed 18 → 21</small></h3><p class="note">Everything at once, with less time between hazards, under a meteor that grows as you near the finish.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap two">
+    <div>
+      <h2>Amber Rush</h2>
+      <ul class="points">
+        <li><b>Chain it.</b> Every 5 amber in a row raises the multiplier, up to ×5. Each tier adds 5% speed as well as points.</li>
+        <li><b>Miss it, lose it.</b> Let an amber go past and you drop a tier, so the arcs over pits and boulders become a real gamble.</li>
+        <li><b>Stampede.</b> 16 amber fill the rush bar: 5 seconds of +35% speed in which the dino smashes obstacles for bonus points, runs straight over pits, climbs ledges and pulls in nearby amber.</li>
+      </ul>
+    </div>
+    <img class="px" src="media/stampede.png" alt="A Stampede at the volcano: the callout flashes while the dino runs towards a row of amber" width="1280" height="720" style="border-radius:14px">
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap two">
+    <img class="px" src="media/pterodactyl.png" alt="A pterodactyl swoops in low over the tar pits level" width="1280" height="720" style="border-radius:14px">
+    <div>
+      <h2>Fair at any speed</h2>
+      <ul class="points">
+        <li><b>Gaps are measured in seconds.</b> Every hazard is followed by 0.8 to 1.8 seconds of flat run-up, sized for the fastest multiplier, so going faster never cuts your reaction time below the minimum.</li>
+        <li><b>Pits are timed against the slowest speed</b>, so a faster dino only finds them easier.</li>
+        <li><b>Combos are spaced against the jump arc:</b> after a pit or a ledge there's always time to land and jump again.</li>
+        <li><b>The jump forgives.</b> A short grace period after running off an edge, and presses just before landing still count.</li>
+        <li><b>Telegraphed danger.</b> Boulders blink a marker before they fall; pterodactyls show their height well before they arrive.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap two narrow">
+    <div>
+      <h2>How it's built</h2>
+      <p><b>Unity 6 and C#.</b> The scene is empty: the game creates everything at runtime from a few scripts.</p>
+      <p><b>Pixel-perfect.</b> It renders to a 180-pixel-tall image that's scaled up to the screen, so the art stays crisp at any size. On a phone held upright the view grows taller and the ground lifts towards the middle.</p>
+      <p><b>Generated, not imported.</b> Sprites are drawn from pixel-art text and small generators, the ground is painted chunk by chunk with rock layers and fossils, the font is a 3×5 bitmap, and the sound effects are synthesised from square waves and noise.</p>
+      <p><b>Tested headless.</b> The game can run without a window, let its autoplay play any level and save screenshots. That's how every level, the transitions and the phone layout were checked, and the autoplay clears all five levels.</p>
+    </div>
+    <img class="px phone" src="media/phone.png" alt="The Volcano level on a phone held upright: a flaming boulder falls towards its warning marker, with rock layers and fossils below the ground" width="564" height="1216" loading="lazy">
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Charlie Hall · <a href="https://www.linkedin.com/in/charliehall20">LinkedIn</a> · <a href="https://github.com/Charliehall10/extinction-dash">Source code</a></p>
+    <p>Controls: Space, Up or W to jump (hold for higher), Down to drop faster, P to pause, M to mute. On touch screens, tap and hold. Pick unlocked levels on the title screen with Left/Right or by tapping the screen edges.</p>
+  </div>
+</footer>
+</body>
+</html>

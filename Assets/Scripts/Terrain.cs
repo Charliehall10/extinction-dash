@@ -56,7 +56,7 @@ public static class GroundPainter
             int hc = c.h[i];
             if (hc == Chunk.Pit)
             {
-                PaintPit(px, w, depth, i, wx, s.pit);
+                PaintPit(px, w, depth, i, wx, s);
                 continue;
             }
             int hl = i > 0 ? c.h[i - 1] : hc, hr = i < w - 1 ? c.h[i + 1] : hc;
@@ -76,8 +76,8 @@ public static class GroundPainter
 
             // Ledge faces and pit walls get an outline so steps read clearly.
             int faceFrom = int.MaxValue;
-            if (hl == Chunk.Pit || hl < hc - 2) faceFrom = hl == Chunk.Pit ? -depth : hl;
-            if (hr == Chunk.Pit || hr < hc - 2) faceFrom = Mathf.Min(faceFrom, hr == Chunk.Pit ? -depth : hr);
+            if (hl == Chunk.Pit || hl < hc - 2) faceFrom = hl == Chunk.Pit ? -PitDepth : hl;
+            if (hr == Chunk.Pit || hr < hc - 2) faceFrom = Mathf.Min(faceFrom, hr == Chunk.Pit ? -PitDepth : hr);
             if (faceFrom != int.MaxValue)
             {
                 for (int y = Mathf.Max(-depth, faceFrom); y < top; y++) px[(y + depth) * w + i] = Art.Outline;
@@ -95,12 +95,17 @@ public static class GroundPainter
         c.sr.sprite = Sprite.Create(c.tex, new Rect(0, 0, w, H), new Vector2(0, depth / (float)H), Art.PPU, 0, SpriteMeshType.FullRect);
     }
 
-    static void PaintPit(Color32[] px, int w, int depth, int i, int wx, PitKind kind)
+    // Pits are filled a few units deep; below that is rock, so on tall
+    // (portrait) screens they don't run all the way down the screen.
+    const int PitDepth = 40;
+
+    static void PaintPit(Color32[] px, int w, int depth, int i, int wx, GroundStyle s)
     {
         for (int y = -depth; y < 0; y++)
         {
             Color32 col;
-            switch (kind)
+            if (y < -PitDepth - (int)(Hash(wx, 0, 14) * 3)) col = Deep(wx, y, s);
+            else switch (s.pit)
             {
                 case PitKind.Tar:
                     if (y > -7) continue;
